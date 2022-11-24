@@ -1,17 +1,133 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
-    <ion-title>
-      Tab 2
-    </ion-title>
+    <ion-title> Weather App </ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">Tab 2</ion-title>
-    </ion-toolbar>
-  </ion-header>
-
-  <app-explore-container name="Tab 2 page"></app-explore-container>
+  <ion-grid>
+    <ion-row>
+      <ion-col size="4" style="border-style: groove; padding-top: 10px">
+        <form [formGroup]="addCityForm" (ngSubmit)="onAdd(addCityForm)">
+          <ion-item>
+            <ion-input
+              formControlName="city"
+              type="text"
+              placeholder="Type City Name"
+            ></ion-input>
+            <ion-button type="submit" [disabled]="addCityForm.invalid"
+              ><ion-icon name="add-outline"></ion-icon
+            ></ion-button>
+          </ion-item>
+        </form>
+        <ion-item>
+          <ion-searchbar
+            showCancelButton="focus"
+            placeholder="Recent Locations"
+            [(ngModel)]="searchCity"
+          ></ion-searchbar>
+        </ion-item>
+        <ion-list>
+          <ion-item
+            *ngFor="let city of cityLocations | filter: searchCity; let i = index"
+          >
+            {{ city.name }} - {{ city.main.temp }}C {{ city.weather[0].main }}
+            <img
+              src="http://openweathermap.org/img/wn/{{
+                city.weather[0].icon
+              }}@2x.png"
+              alt="{ city.weather[0].main }}"
+              width="50"
+              height="50"
+            />
+            <ion-item class="ion-float-right">
+              <ion-icon
+                name="repeat-outline"
+                (click)="getWeatherUpdates(i)"
+              ></ion-icon>
+              <ion-icon name="close-outline" (click)="removeCity(i)"></ion-icon>
+            </ion-item>
+          </ion-item>
+        </ion-list>
+        <ion-button type="button" (click)="clearList()" class="ion-float-right"
+          >Clear</ion-button
+        >
+      </ion-col>
+      <ion-col size="8" style="border-style: groove" *ngIf="cityWeather">
+        <h3>
+          {{ city }}
+          <ion-item class="ion-float-right">
+            <ion-icon
+              name="repeat-outline"
+              (click)="getWeatherUpdates(selectedCity)"
+              *ngIf="cityLocations.length > 0"
+            ></ion-icon>
+          </ion-item>
+        </h3>
+        <ion-grid>
+          <ion-row *ngFor="let t of weather">
+            <ion-col>
+              <img
+                src="http://openweathermap.org/img/wn/{{ t.icon }}@2x.png"
+                alt="{ t.main }}"
+                width="200"
+                height="200"
+              />
+            </ion-col>
+            <ion-col>
+              <p>{{ current.temp }}C</p>
+              <p *ngFor="let t of weather">{{ t.description }}</p>
+              <p>{{ current.wind_speed }}ms {{ current.wind_deg }}deg</p>
+              <p>Pressure {{ current.pressure }}</p>
+            </ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col *ngFor="let d of dailyWeather">
+              <ion-item style="width: 200px">
+                {{ d.dt * 1000 | date: "EE dd":"+5:30" }} {{ d.temp.max }}C
+                <img
+                  *ngFor="let x of d.weather"
+                  src="http://openweathermap.org/img/wn/{{ x.icon }}@2x.png"
+                  alt="{ x.main }}"
+                />
+              </ion-item>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+        <!-- <div class="row" *ngFor="let t of weather">
+          <div class="col">
+            <img
+              src="http://openweathermap.org/img/wn/{{ t.icon }}@2x.png"
+              alt="{ t.main }}"
+              width="200"
+              height="200"
+            />
+          </div>
+          <div class="col">
+            <p>{{ current.temp }}C</p>
+            <p *ngFor="let t of weather">{{ t.description }}</p>
+            <p>{{ current.wind_speed }}ms {{ current.wind_deg }}deg</p>
+            <p>Pressure {{ current.pressure }}</p>
+          </div>
+        </div> -->
+        <!-- <div class="row">
+          <div
+            class="col"
+            *ngFor="let d of dailyWeather"
+            style="display: inline-block"
+          >
+            {{ d.dt * 1000 | date: "EE dd":"+5:30" }}
+            <img
+              *ngFor="let x of d.weather"
+              src="http://openweathermap.org/img/wn/{{ x.icon }}@2x.png"
+              alt="{ x.main }}"
+              width="50"
+              height="50"
+            />
+            {{ d.temp.max }}C
+          </div>
+        </div> -->
+      </ion-col>
+    </ion-row>
+  </ion-grid>
 </ion-content>

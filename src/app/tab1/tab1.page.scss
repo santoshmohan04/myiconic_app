@@ -1,0 +1,12 @@
+ion-card-header.ios {
+  display: flex;
+  flex-flow: column-reverse;
+}
+
+ion-card {
+  width: 400px;
+}
+
+.my-custom-menu {
+  --width: 200px;
+}
